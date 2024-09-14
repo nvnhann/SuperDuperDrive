@@ -79,11 +79,11 @@ class CredentialTests {
         WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
         buttonSignUp.click();
 
-		/* Check that the sign up was successful.
+		/* Check that the sign-up was successful.
 		// You may have to modify the element "success-msg" and the sign-up
 		// success message below depening on the rest of your code.
 		*/
-        Assertions.assertTrue(driver.findElement(By.id("success")).getText().contains("You successfully signed up!"));
+        Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
     }
 
 

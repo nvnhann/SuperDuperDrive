@@ -78,12 +78,7 @@ class SingupAndLoginFlowTests {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonSignUp")));
         WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
         buttonSignUp.click();
-
-        // Check signup success message
-        Assertions.assertTrue(driver.findElement(By.id("success")).getText().contains("You successfully signed up!"));
-
-        // Navigate to the login page
-        driver.get("http://localhost:" + this.port + "/login");
+        Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
 
         // Fill in the login form
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));

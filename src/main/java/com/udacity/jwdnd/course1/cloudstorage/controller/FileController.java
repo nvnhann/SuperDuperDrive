@@ -49,7 +49,7 @@ public class FileController {
         String fileName = fileUpload.getOriginalFilename();
 
         if (!this.fileService.isFileNameAvailableForUser(username, fileName)) {
-            return "redirect:/result?isSuccess=" + false + "&errorType=" + 1;
+            return "redirect:/result?isSuccess=" + false + "&errorType=" + 2;
         }
 
         try {

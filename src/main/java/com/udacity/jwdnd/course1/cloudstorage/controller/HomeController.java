@@ -156,7 +156,7 @@ public class HomeController {
             data.put("hasError", false);
         }
         model.mergeAttributes(data);
-        return "signup";
+        return "redirect:/login";
     }
 
     /**

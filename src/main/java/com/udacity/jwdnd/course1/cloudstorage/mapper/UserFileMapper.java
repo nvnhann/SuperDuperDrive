@@ -22,9 +22,9 @@ public interface UserFileMapper {
     /**
      * Retrieves a list of UserFiles by the username and file name.
      *
-     * @param paraMap a map containing the parameters "username" and "fileName"
+     * @param fileName a map containing the parameters "username" and "fileName"
      * @return a list of UserFiles associated with the given username and file name
      */
     @Select("SELECT * FROM FILES WHERE userid = #{userid} AND filename = #{fileName}")
-    List<UserFile> getFileByUsernameAndFileName(Map<String, Object> paraMap);
+    List<UserFile> getFileByUsernameAndFileName(String fileName, Integer userid);
 }

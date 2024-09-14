@@ -43,7 +43,7 @@ public class FileService {
         Integer userid = userMapper.getUserIdByUsername(username);
         paraMap.put("userid", userid);
         paraMap.put("filename", filename);
-        return this.userFileMapper.getFileByUsernameAndFileName(paraMap).isEmpty();
+        return this.userFileMapper.getFileByUsernameAndFileName(filename, userid).isEmpty();
     }
 
     /**
