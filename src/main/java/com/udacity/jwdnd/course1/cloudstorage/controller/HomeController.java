@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,8 +82,8 @@ public class HomeController {
             @ModelAttribute("userVo") UserVO userVo,
             Model model
     ) {
-        this.logger.error("logout");
-        return this.loginPage(userVo, false, true, model);
+        this.logger.info("logout");
+        return this.loginPage(userVo, false, true, false, model);
     }
 
     /**
@@ -99,6 +100,7 @@ public class HomeController {
             @ModelAttribute("userVo") UserVO userVo,
             @RequestParam(required = false, name = "error") Boolean errorValue,
             @RequestParam(required = false, name = "loggedOut") Boolean loggedOut,
+            @ModelAttribute("signupSuccessfully") Boolean signupSuccessfully,
             Model model
     ) {
         Boolean hasError = errorValue != null && errorValue;
@@ -108,6 +110,7 @@ public class HomeController {
         data.put("loginSuccessfully", false);
         data.put("hasError", hasError);
         data.put("isLoggedOut", isLoggedOut);
+        data.put("signupSuccessfully", signupSuccessfully);
         model.addAllAttributes(data);
         return "login";
     }
@@ -142,6 +145,7 @@ public class HomeController {
     @PostMapping("/signup")
     public String signupSubmit(
             @ModelAttribute("userVo") UserVO userVo,
+            RedirectAttributes redirectAttributes,
             Model model
     ) {
         this.logger.info("Received user info from Signup Form: {}", userVo.toString());
@@ -155,6 +159,7 @@ public class HomeController {
             data.put("signupSuccessfully", true);
             data.put("hasError", false);
         }
+        redirectAttributes.addFlashAttribute("signupSuccessfully", data.get("signupSuccessfully"));
         model.mergeAttributes(data);
         return "redirect:/login";
     }
