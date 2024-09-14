@@ -12,9 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
-import java.io.File;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CloudStorageApplicationTests {
+class NoteTests {
 
     @LocalServerPort
     private int port;
@@ -39,12 +38,6 @@ class CloudStorageApplicationTests {
         if (this.driver != null) {
             driver.quit();
         }
-    }
-
-    @Test
-    public void getLoginPage() {
-        driver.get("http://localhost:" + this.port + "/login");
-        Assertions.assertEquals("Login", driver.getTitle());
     }
 
     /**
@@ -119,89 +112,80 @@ class CloudStorageApplicationTests {
         loginButton.click();
 
         webDriverWait.until(ExpectedConditions.titleContains("Home"));
-
     }
 
-    /**
-     * PLEASE DO NOT DELETE THIS TEST. You may modify this test to work with the
-     * rest of your code.
-     * This test is provided by Udacity to perform some basic sanity testing of
-     * your code to ensure that it meets certain rubric criteria.
-     *
-     * If this test is failing, please ensure that you are handling redirecting users
-     * back to the login page after a succesful sign up.
-     * Read more about the requirement in the rubric:
-     * https://review.udacity.com/#!/rubrics/2724/view
-     */
-    @Test
-    public void testRedirection() {
-        // Create a test account
-        doMockSignUp("Redirection","Test","RT","123");
-
-        // Check if we have been redirected to the log in page.
-        Assertions.assertEquals("http://localhost:" + this.port + "/signup", driver.getCurrentUrl());
-        Assertions.assertTrue(driver.getPageSource().contains("You successfully signed up"));
-
-    }
-
-    /**
-     * PLEASE DO NOT DELETE THIS TEST. You may modify this test to work with the
-     * rest of your code.
-     * This test is provided by Udacity to perform some basic sanity testing of
-     * your code to ensure that it meets certain rubric criteria.
-     *
-     * If this test is failing, please ensure that you are handling bad URLs
-     * gracefully, for example with a custom error page.
-     *
-     * Read more about custom error pages at:
-     * https://attacomsian.com/blog/spring-boot-custom-error-page#displaying-custom-error-page
-     */
-    @Test
-    public void testBadUrl() {
-        // Create a test account
-        doMockSignUp("URL","Test","UT","123");
-        doLogIn("UT", "123");
-
-        // Try to access a random made-up URL.
-        driver.get("http://localhost:" + this.port + "/some-random-page");
-        Assertions.assertFalse(driver.getPageSource().contains("Whitelabel Error Page"));
-    }
-
-
-    /**
-     * PLEASE DO NOT DELETE THIS TEST. You may modify this test to work with the
-     * rest of your code.
-     * This test is provided by Udacity to perform some basic sanity testing of
-     * your code to ensure that it meets certain rubric criteria.
-     *
-     * If this test is failing, please ensure that you are handling uploading large files (>1MB),
-     * gracefully in your code.
-     *
-     * Read more about file size limits here:
-     * https://spring.io/guides/gs/uploading-files/ under the "Tuning File Upload Limits" section.
-     */
-    @Test
-    public void testLargeUpload() {
-        // Create a test account
-        doMockSignUp("Large File","Test","LFT","123");
-        doLogIn("LFT", "123");
-
-        // Try to upload an arbitrary large file
+    private void createNote (String title, String description) {
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
-        String fileName = "upload5m.zip";
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+        WebElement tabnote = driver.findElement(By.id("nav-notes-tab"));
+        tabnote.click();
 
-        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fileUpload")));
-        WebElement fileSelectButton = driver.findElement(By.id("fileUpload"));
-        fileSelectButton.sendKeys(new File(fileName).getAbsolutePath());
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-creation-btn")));
+        WebElement openModal = driver.findElement(By.id("note-creation-btn"));
+        openModal.click();
 
-        WebElement uploadButton = driver.findElement(By.id("uploadButton"));
-        uploadButton.click();
-        try {
-            webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success")));
-        } catch (org.openqa.selenium.TimeoutException e) {
-            System.out.println("Large File upload failed");
-        }
-        Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+        WebElement noteTitle = driver.findElement(By.id("note-title"));
+        noteTitle.click();
+        noteTitle.sendKeys(title);
 
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+        WebElement noteDescription = driver.findElement(By.id("note-description"));
+        noteDescription.click();
+        noteDescription.sendKeys(description);
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSubmit")));
+        WebElement noteSubmit = driver.findElement(By.id("noteSubmit"));
+        noteSubmit.click();
+
+        Assertions.assertEquals("http://localhost:" + this.port + "/result?isSuccess=true#nav-notes", driver.getCurrentUrl());
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+        WebElement success = driver.findElement(By.id("success"));
+        success.click();
+    }
+
+
+    @Test
+    @Order(1)
+    public void crudNoteTest() {
+        doMockSignUp("URL","Test","UTNOTE","123");
+        doLogIn("UTNOTE", "123");
+        createNote("Note Title", "Note Description");
+        Assertions.assertTrue(driver.getPageSource().contains("Note Description"));
+        WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-edit-1")));
+        WebElement editButton = driver.findElement(By.id("note-edit-1"));
+        editButton.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+        WebElement noteTitleUpdate = driver.findElement(By.id("note-title"));
+        noteTitleUpdate.click();
+        noteTitleUpdate.sendKeys("Note Title updated");
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+        WebElement noteDescriptionUpdated = driver.findElement(By.id("note-description"));
+        noteDescriptionUpdated.click();
+        noteDescriptionUpdated.sendKeys("Note Description updated");
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSubmit")));
+        WebElement noteUpdate = driver.findElement(By.id("noteSubmit"));
+        noteUpdate.click();
+
+        Assertions.assertEquals("http://localhost:" + this.port + "/result?isSuccess=true#nav-notes", driver.getCurrentUrl());
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+        WebElement submitupdate = driver.findElement(By.id("success"));
+        submitupdate.click();
+
+        Assertions.assertTrue(driver.getPageSource().contains("Note Description updated"));
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-delete-1")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-delete-1")));
+        WebElement deleteButton = driver.findElement(By.id("note-delete-1"));
+        deleteButton.click();
+        Assertions.assertEquals("http://localhost:" + this.port + "/result?isSuccess=true#nav-notes", driver.getCurrentUrl());
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+        WebElement deleteBtn = driver.findElement(By.id("success"));
+        deleteBtn.click();
+        Assertions.assertFalse(driver.getPageSource().contains("Note description updated"));
     }
 }

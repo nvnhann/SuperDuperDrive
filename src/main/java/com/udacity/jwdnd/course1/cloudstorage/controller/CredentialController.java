@@ -26,7 +26,7 @@ public class CredentialController {
     /**
      * Handles the submission of a user credential, inserting or updating it.
      *
-     * @param userCredentialVO the UserCredential object to insert or update
+     * @param userCredential the UserCredential object to insert or update
      * @param authentication   the authentication object containing user details
      * @param model            the model object for the view
      * @return a redirect URL based on the success of the operation
@@ -39,7 +39,7 @@ public class CredentialController {
     ) {
         String username = (String) authentication.getPrincipal();
         Boolean isSuccess = credentialService.insertOrUpdateCredential(userCredential, username);
-        return "redirect:/result?isSuccess=" + isSuccess;
+        return "redirect:/result?isSuccess=" + isSuccess + "#nav-credentials";
     }
 
     /**
@@ -58,8 +58,8 @@ public class CredentialController {
             Authentication authentication,
             Model model
     ) {
-        logger.error("CredentialId: " + credentialId);
+        logger.info("CredentialId: {}", credentialId);
         Boolean isSuccess = credentialService.deleteCredential(credentialId);
-        return "redirect:/result?isSuccess=" + isSuccess;
+        return "redirect:/result?isSuccess=" + isSuccess + "#nav-credentials";
     }
 }

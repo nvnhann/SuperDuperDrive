@@ -15,12 +15,14 @@
             <button
                     type="button"
                     class="btn btn-success"
+                    th:id="'note-edit-' + ${note.noteId}"
                     th:onclick="editNote([[${note}]])"
             >
                 Edit
             </button>
             <a
                     class="btn btn-danger"
+                    th:id="'note-delete-' + ${note.noteId}"
                     th:href="@{/notes/note?noteId={noteId}(noteId=${note.noteId})}"
             >
                 Delete

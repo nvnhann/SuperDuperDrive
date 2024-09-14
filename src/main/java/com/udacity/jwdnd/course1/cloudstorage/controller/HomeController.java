@@ -10,6 +10,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,8 @@ public class HomeController {
     /**
      * Handles the home page request and populates the model with user notes, credentials, and files.
      *
-     * @param userNoteVO       the user note model attribute
-     * @param userCredentialVO the user credential model attribute
+     * @param userNote       the user note model attribute
+     * @param userCredential the user credential model attribute
      * @param authentication   the authentication object containing user details
      * @param model            the model to be populated
      * @return the name of the home view template
