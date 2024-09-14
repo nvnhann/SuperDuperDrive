@@ -10,7 +10,6 @@ import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -83,7 +82,7 @@ public class HomeController {
             Model model
     ) {
         this.logger.info("logout");
-        return this.loginPage(userVo, false, true, false, model);
+        return this.loginPage(userVo, false, true, model);
     }
 
     /**
@@ -100,17 +99,17 @@ public class HomeController {
             @ModelAttribute("userVo") UserVO userVo,
             @RequestParam(required = false, name = "error") Boolean errorValue,
             @RequestParam(required = false, name = "loggedOut") Boolean loggedOut,
-            @ModelAttribute("signupSuccessfully") Boolean signupSuccessfully,
             Model model
     ) {
         Boolean hasError = errorValue != null && errorValue;
         Boolean isLoggedOut = loggedOut != null && loggedOut;
+        Boolean signupSuccessfully = (Boolean) model.getAttribute("signupSuccessfully");
         Map<String, Object> data = new HashMap<>();
         data.put("toLogin", true);
         data.put("loginSuccessfully", false);
         data.put("hasError", hasError);
         data.put("isLoggedOut", isLoggedOut);
-        data.put("signupSuccessfully", signupSuccessfully);
+        data.put("signupSuccessfully", signupSuccessfully != null && signupSuccessfully);
         model.addAllAttributes(data);
         return "login";
     }
